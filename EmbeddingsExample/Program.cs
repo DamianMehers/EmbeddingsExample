@@ -2,4 +2,4 @@
 using EmbeddingsExample.SqliteExtensions;
 
 var demo = new Demo();
-await demo.InitializeDatabase();
+await demo.Run();

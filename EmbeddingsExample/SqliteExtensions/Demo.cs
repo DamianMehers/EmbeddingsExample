@@ -14,12 +14,11 @@ internal class Demo
 
   const string LibraryPath = "e_sqlite3";
 
-
-  internal async Task InitializeDatabase()
+  internal async Task Run()
   {
     var databasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Demo.db");
 
-    if(File.Exists(databasePath))
+    if (File.Exists(databasePath))
     {
       File.Delete(databasePath);
     }
@@ -65,8 +64,9 @@ internal class Demo
     }
 
     // Now search
-    Console.WriteLine("Searching ...");
-    var searchEmbedding = await GenerateEmbedding("disaster");
+    var searchTerm = "disaster";
+    Console.WriteLine($"Searching for \"{searchTerm}\" ...");
+    var searchEmbedding = await GenerateEmbedding(searchTerm);
     var results = await SearchForEmbedding(connection, searchEmbedding, k: 3);
     foreach (var result in results)
     {
@@ -76,7 +76,6 @@ internal class Demo
 
   private string GetExtensionName()
   {
-
     // Could also look at RuntimeInformation.ProcessArchitecture;
     if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
     {
@@ -128,7 +127,7 @@ internal class Demo
     return result?.Embedding ?? [];
   }
 
-  private async Task AddEmbedding(SQLiteAsyncConnection connection,  Model model, double[] embedding)
+  private async Task AddEmbedding(SQLiteAsyncConnection connection, Model model, double[] embedding)
   {
     var sql = "INSERT INTO vec_items (rowid, embedding) VALUES (?, ?)";
     var json = JsonSerializer.Serialize(embedding);
@@ -143,19 +142,13 @@ internal class Demo
     var parameters = new object[] { json, k };
     var result = await connection.QueryAsync<Model>(sql, parameters);
     return result;
-
   }
-
-
 
   public class EmbeddingResponse
   {
     [JsonPropertyName("embedding")]
     public double[] Embedding { get; set; } = [];
   }
-
-
-
 
   class Model
   {
