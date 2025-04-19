@@ -1,2 +1,5 @@
 ﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+using EmbeddingsExample.SqliteExtensions;
+
+var demo = new Demo();
+await demo.InitializeDatabase();
